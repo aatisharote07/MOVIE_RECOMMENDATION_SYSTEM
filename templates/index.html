@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CineMatch — Next-Gen Movie Recommendations</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/google-fonts@3.3.1/css?family=Montserrat:400,700|Poppins:400,500,700" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+    body {
+      font-family: 'Poppins', 'Montserrat', Arial, sans-serif;
+      transition: background 0.5s, color 0.5s;
+    }
+    .cinematch-glow {
+      box-shadow: 0 4px 60px 10px rgba(49, 57, 60, 0.28);
+    }
+    .movie-card-3d {
+      perspective: 1000px;
+      will-change: transform;
+      transition: transform 0.32s cubic-bezier(.86, .01, .12, .99), box-shadow 0.32s;
+      box-shadow: 0 8px 32px 0 rgba(62, 150, 244, 0.22);
+      background: rgba(49, 57, 60, 0.97);
+    }
+    .movie-card-3d:hover {
+      transform: rotateY(6deg) scale(1.035) translateY(-6px);
+      box-shadow: 0 16px 48px 0 rgba(62, 150, 244, 0.35);
+      z-index: 9;
+    }
+    .movie-poster-clip {
+      clip-path: polygon(0 0, 100% 0, 100% 88%, 50% 100%, 0 88%);
+    }
+    .genre-badge {
+      background: linear-gradient(90deg, #3E96F4, #CCC7BF);
+      color: #31393C;
+      font-size: 0.75rem;
+      padding: 0.19rem 0.8rem;
+      border-radius: 999px;
+      margin-right: 0.35rem;
+    }
+    .dark-mode {
+      background: linear-gradient(125deg, #31393C 0%, #2E3944 60%, #3E96F4 100%);
+      color: #EDEEEB; /* Light text color for dark mode */
+    }
+    .light-mode {
+      background: linear-gradient(125deg, #FFFFFF 0%, #EDEEEB 60%, #CCC7BF 100%);
+      color: #31393C; /* Default dark text color for light mode */
+    }
+    .cinematch-spotlight {
+      background: linear-gradient(225deg, rgba(204, 199, 191, 0.13) 0%, rgba(62, 150, 244, 0.15) 79%);
+      border-radius: .8rem;
+      box-shadow: 0 2px 20px 1px rgba(49, 57, 60, 0.15);
+    }
+    .light-mode .cinematch-spotlight {
+       background: linear-gradient(225deg, rgba(204, 199, 191, 0.3) 0%, rgba(62, 150, 244, 0.2) 79%); /* Adjusted for light mode */
+       box-shadow: 0 2px 20px 1px rgba(49, 57, 60, 0.1); /* Adjusted for light mode */
+    }
+
+    .recommend-toggle > button.active {
+      background-color: #3E96F4;
+      color: #FFFFFF;
+      transform: scale(1.1);
+      font-weight: 600;
+      box-shadow: 0 0 25px 2px rgba(62, 150, 244, 0.18);
+    }
+    .transition-bg {
+      transition: background 0.6s cubic-bezier(.86, .01, .12, .99);
+    }
+    .star {
+      color: #ffc83d;
+      font-size: 0.93rem;
+      margin-right: 2px;
+    }
+    .chart-container {
+      position: relative;
+      height: 400px;
+      width: 100%;
+    }
+    .glass {
+      background:rgba(49, 57, 60, 0.43);
+      -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+      border-radius:1rem; border:1.5px solid rgba(204, 199, 191, 0.13);
+    }
+    .light-mode .glass {
+       background: rgba(255, 255, 255, 0.6); /* Lighter glass effect for light mode */
+       border: 1.5px solid rgba(49, 57, 60, 0.13); /* Darker border for light mode */
+    }
+    ::selection { background-color:#3E96F4; color:#FFFFFF; }
+
+    .movie-search-input {
+      background: rgba(49, 57, 60, 0.5);
+      color: #EDEEEB;
+      border: 1px solid rgba(62, 150, 244, 0.4);
+      border-radius: 0.8rem;
+      padding: 0.75rem 1rem;
+      width: 100%;
+      max-width: 36rem;
+    }
+     .light-mode .movie-search-input {
+        background: rgba(255, 255, 255, 0.8); /* Lighter input background for light mode */
+        color: #31393C; /* Darker text for light mode */
+        border-color: rgba(49, 57, 60, 0.4); /* Darker border for light mode */
+     }
+
+    .movie-search-input:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(62, 150, 244, 0.5);
+      border-color: rgba(62, 150, 244, 0.8);
+    }
+
+    datalist {
+      background-color: #2E3944;
+      border: 1px solid #3E96F4;
+      border-radius: 0.8rem;
+      color: #EDEEEB;
+    }
+     .light-mode datalist {
+        background-color: #EDEEEB; /* Lighter background for light mode datalist */
+        border-color: #CCC7BF; /* Lighter border for light mode datalist */
+        color: #31393C; /* Darker text for light mode datalist */
+     }
+
+    datalist option {
+      background-color: #2E3944;
+      color: #EDEEEB;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+    }
+     .light-mode datalist option {
+        background-color: #EDEEEB; /* Lighter background for light mode option */
+        color: #31393C; /* Darker text for light mode option */
+     }
+
+
+    datalist option:hover {
+      background-color: #3E96F4;
+      color: #FFFFFF;
+    }
+     .light-mode datalist option:hover {
+        background-color: #3E96F4; /* Blue hover background */
+        color: #FFFFFF; /* White hover text */
+     }
+
+
+    .loader {
+      display: none;
+      width: 48px;
+      height: 48px;
+      border: 5px solid #EDEEEB;
+      border-bottom-color: transparent;
+      border-radius: 50%;
+      box-sizing: border-box;
+      animation: rotation 1s linear infinite;
+      margin: 2rem auto;
+    }
+     .light-mode .loader {
+        border-color: #31393C; /* Darker loader color for light mode */
+        border-bottom-color: transparent;
+     }
+
+    .no-results {
+      text-align: center;
+      padding: 3rem;
+      background: rgba(49, 57, 60, 0.3);
+      border-radius: 1rem;
+      margin: 2rem auto;
+      max-width: 32rem;
+    }
+     .light-mode .no-results {
+        background: rgba(204, 199, 191, 0.3); /* Lighter background for light mode */
+        color: #31393C; /* Darker text for light mode */
+     }
+
+    .section-padding {
+      padding: 4rem 1rem;
+    }
+
+    @media (min-width: 768px) {
+      .section-padding {
+        padding: 6rem 3rem;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .section-padding {
+        padding: 8rem 6rem;
+      }
+    }
+
+    .content-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .max-w-screen-xl {
+        max-width: 1280px;
+    }
+
+    /* Light mode general text color set to dark grey */
+    .light-mode,
+    .light-mode .text-[#CCC7BF],
+    .light-mode .text-[#3E96F4],
+    .light-mode .text-[#EDEEEB],
+    .light-mode .text-[#FFFFFF],
+    .light-mode h1,
+    .light-mode h2,
+    .light-mode h3,
+    .light-mode h4,
+    .light-mode p,
+    .light-mode a,
+    .light-mode span,
+    .light-mode small,
+    .light-mode i {
+        color: #31393C !important; /* Set all text elements to dark grey in light mode */
+    }
+
+    /* Light mode specific text color for movie cards set to white */
+    .light-mode .movie-card-3d h3,
+    .light-mode .movie-card-3d .genre-badge,
+    .light-mode .movie-card-3d .fa-star,
+    .light-mode .movie-card-3d .fa-star-half-alt {
+        color: #FFFFFF !important; /* Set movie card text and stars to white in light mode */
+    }
+
+    /* Adjust specific elements for better contrast in light mode if needed */
+    .light-mode .cinematch-spotlight h3 {
+        color: #31393C !important; /* Ensure spotlight heading is dark */
+    }
+
+    .light-mode .recommend-toggle > button {
+         color: #31393C !important; /* Ensure toggle buttons have dark text */
+    }
+
+    .light-mode .recommend-toggle > button.active {
+        color: #FFFFFF !important; /* Keep active button text white */
+    }
+
+     .light-mode .movie-card-3d a {
+         color: #FFFFFF !important; /* Keep details button text white */
+     }
+     .light-mode .movie-card-3d a:hover {
+         color: #31393C !important; /* Dark text on hover for details button */
+     }
+
+    .light-mode .no-results h3,
+    .light-mode .no-results p,
+    .light-mode .no-results i {
+         color: #31393C !important; /* Ensure no results text and icon are dark */
+    }
+
+
+  </style>
+</head>
+<body class="light-mode transition-bg min-h-screen flex flex-col relative" id="body">
+
+  <div class="absolute w-full h-full left-0 top-0 -z-10 pointer-events-none select-none transition-bg"
+    id="dynamic-bg"
+    style="background: radial-gradient(ellipse at 60% 30%, rgba(204, 199, 191, 0.3) 0%, rgba(237, 238, 235, 0.19) 100%);"></div>
+
+  <nav class="z-10 flex justify-between items-center py-3 px-5 md:px-12 bg-transparent fixed w-full left-0 top-0 cinematch-glow">
+    <a href="#" class="text-2xl flex items-center font-montserrat tracking-widest font-bold text-[#CCC7BF]">
+      <i class="fas fa-film mr-2 text-[#3E96F4] drop-shadow"></i>Cine<span class="text-[#EDEEEB]">Match</span>
+    </a>
+    <div class="flex items-center gap-6">
+      <a href="#recommendations" class="font-semibold tracking-wide hover:text-[#3E96F4] text-base">Recommendations</a>
+      <a href="#genre-insights-chart" class="font-semibold tracking-wide hover:text-[#CCC7BF] text-base">Genre Insights</a> <a href="#about" class="font-semibold tracking-wide hover:text-[#CCC7BF] text-base hidden sm:block">About</a>
+      <button id="toggle-mode" title="Toggle Dark/Light Mode"
+        class="p-2 transition-all text-xl hover:bg-white hover:bg-opacity-20 rounded-lg focus:outline-none">
+        <i class="fas fa-sun text-[#3E96F4]" id="mode-icon"></i>
+      </button>
+    </div>
+  </nav>
+
+  <section class="section-padding w-full flex flex-col items-center relative overflow-x-hidden">
+    <div class="max-w-3xl mb-6 text-center animate-fade-in">
+      <h1 class="text-4xl md:text-5xl font-extrabold mb-3 font-montserrat tracking-tight">
+        Discover Your <span class="text-[#CCC7BF]">Next Favorite</span><br>
+        Movie with <span class="text-[#3E96F4]">CineMatch</span>
+      </h1>
+      <p class="text-lg md:text-xl text-[#EDEEEB] mt-2 font-medium tracking-wide">
+        Premium AI-powered suggestions, instant magic, and a true cinematic experience.<br>
+        Search, explore, and enjoy recommendations as stunning as the movies themselves.
+      </p>
+    </div>
+    <div class="mt-8 mb-4 content-center">
+      <form class="flex flex-col md:flex-row gap-4 items-center justify-center w-full" method="POST">
+        <input type="text" name="movie" list="movie-suggestions" class="movie-search-input text-lg shadow-lg" placeholder="Search for a movie you love..." required>
+        <datalist id="movie-suggestions">
+          {% for movie_title in movie_list %}
+            <option value="{{ movie_title }}"></option>
+          {% endfor %}
+        </datalist>
+
+        <button type="submit" id="search-btn"
+          class="bg-gradient-to-r from-[#3E96F4] via-[#2E3944] to-[#CCC7BF] hover:from-[#2E3944] hover:to-[#3E96F4] transition font-semibold px-8 py-3 rounded-xl shadow-lg text-lg text-[#FFFFFF] active:scale-95 flex items-center gap-2">
+          <i class="fas fa-magic"></i> Recommend
+        </button>
+      </form>
+      <div id="loader" class="loader"></div>
+    </div>
+    <div class="flex justify-center mt-6 opacity-80 animate-bounce">
+      <a href="#recommendations"><i class="fas fa-chevron-down text-2xl"></i></a>
+    </div>
+  </section>
+
+  <section id="recommendations" class="section-padding w-full max-w-screen-xl mx-auto">
+    {% if rec_names %}
+    <div class="flex flex-col md:flex-row items-end justify-between mb-5">
+      <div>
+        <h2 class="text-2xl md:text-3xl font-bold mb-1 font-montserrat tracking-wide">
+          <span class="text-[#CCC7BF]">Top Recommendations</span>
+        </h2>
+        <p class="text-sm md:text-base text-[#EDEEEB]">
+          Handpicked matches based on your cinematic taste.
+        </p>
+      </div>
+      <div class="recommend-toggle flex gap-2 mt-4 md:mt-0">
+        <button id="view-cards" class="px-4 py-2 rounded-lg bg-[#2E3944] text-[#EDEEEB] transition focus:outline-none">Card View</button>
+        <button id="view-grid" class="px-4 py-2 rounded-lg bg-[#31393C] text-[#CCC7BF] transition focus:outline-none active">Grid View</button>
+      </div>
+    </div>
+
+    <div id="card-view" class="hidden flex gap-8 overflow-x-auto py-4 scrollbar-thin scrollbar-thumb-[#3E96F4] scrollbar-track-[#31393C] snap-x">
+      {% for name, poster in zip(rec_names, rec_posters) %}
+      <div class="movie-card-3d flex flex-col shadow-xl snap-center w-72 min-w-72 bg-opacity-90 hover:z-10 transition-all duration-300 group">
+        <div>
+          <img src="{{ poster }}" alt="{{ name }}" class="rounded-t-2xl movie-poster-clip object-cover w-full h-80 transition-transform group-hover:scale-105 duration-500 shadow-lg"/>
+        </div>
+        <div class="flex flex-col gap-1 px-4 pt-3 pb-4">
+          <div class="flex items-center justify-between mt-1">
+            <div><span class="genre-badge">Recommended</span></div>
+          </div>
+          <h3 class="text-lg md:text-xl font-bold font-montserrat my-1 text-[#EDEEEB] drop-shadow-lg">{{ name }}</h3>
+          <div class="flex items-center text-sm mb-1">
+            <i class="fas fa-star star"></i>
+            <i class="fas fa-star star"></i>
+            <i class="fas fa-star star"></i>
+            <i class="fas fa-star star"></i>
+            <i class="fas fa-star-half-alt star"></i>
+          </div>
+          <div class="flex items-center gap-2">
+            <a href="https://www.themoviedb.org/search?query={{ name|urlencode }}" target="_blank"
+               class="mt-2 px-4 py-1.5 text-sm rounded-full bg-[#3E96F4] hover:bg-[#CCC7BF] text-[#31393C] font-semibold shadow transition">
+              <i class="fa-solid fa-circle-info mr-1"></i> Details
+            </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div id="grid-view" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-8 transition-all duration-300">
+      {% for name, poster in zip(rec_names, rec_posters) %}
+      <div class="movie-card-3d flex flex-col shadow-xl snap-center hover:z-10 transition-all duration-300 group">
+        <div>
+          <img src="{{ poster }}" alt="{{ name }}" class="rounded-t-2xl object-cover w-full h-80 transition-transform group-hover:scale-105 duration-500 shadow-lg"/>
+        </div>
+        <div class="flex flex-col gap-1 px-4 pt-3 pb-4">
+          <div class="flex items-center justify-between mt-1">
+            <div><span class="genre-badge">Recommended</span></div>
+          </div>
+          <h3 class="text-lg md:text-xl font-bold font-montserrat my-1 text-[#EDEEEB] drop-shadow-lg">{{ name }}</h3>
+          <div class="flex items-center text-sm mb-1">
+            <i class="fas fa-star star"></i>
+            <i class="fas fa-star star"></i>
+            <i class="fas fa-star star"></i>
+            <i class="fas fa-star star"></i>
+            <i class="fas fa-star-half-alt star"></i>
+          </div>
+          <div class="flex items-center gap-2">
+            <a href="https://www.themoviedb.org/search?query={{ name|urlencode }}" target="_blank"
+               class="mt-2 px-4 py-1.5 text-sm rounded-full bg-[#3E96F4] hover:bg-[#CCC7BF] text-[#31393C] font-semibold shadow transition">
+              <i class="fa-solid fa-circle-info mr-1"></i> Details
+            </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% elif request.method == 'POST' %}
+    <div class="no-results max-w-sm mx-auto">
+      <i class="fas fa-film text-4xl text-[#3E96F4] mb-3"></i>
+      <h3 class="text-xl font-bold mb-2">No Recommendations Found</h3>
+      <p class="text-[#EDEEEB]">We couldn't find any recommendations for that movie. Please try searching for another title.</p>
+    </div>
+    {% endif %}
+  </section>
+
+  <section id="genre-insights-chart" class="section-padding w-full max-w-screen-xl mx-auto">
+    <div class="rounded-2xl cinematch-spotlight px-8 py-10 glass text-center shadow-2xl">
+      <h3 class="text-2xl md:text-3xl font-bold mb-6 font-montserrat">Genre Popularity Insights</h3>
+      <div class="chart-container">
+        <canvas id="genrePopularityChart"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="section-padding max-w-5xl mx-auto px-3 mb-24">
+    <div class="rounded-2xl cinematch-spotlight px-8 py-10 glass text-center shadow-2xl">
+      <h3 class="text-2xl md:text-3xl font-bold mb-2 font-montserrat">How CineMatch Works</h3>
+      <p class="text-lg text-[#EDEEEB] mb-3">
+        CineMatch uses advanced AI to analyze storyline, cast, ratings, genres, and even mood and tempo of each movie to deliver personalized recommendations. Explore, compare, and discover new favorites in a visually stunning interface with <span class="text-[#3E96F4] font-semibold">3D movie cards, real-time analytics,</span> and dynamic previews.
+      </p>
+      <div class="flex flex-col md:flex-row justify-center gap-6 mt-7 text-[#EDEEEB]">
+        <div class="flex-1 p-4 rounded-xl bg-gradient-to-br from-[#CCC7BF]/30 to-[#31393C]/10 cinematch-glow">
+          <i class="fas fa-brain fa-2x text-[#3E96F4] mb-2"></i>
+          <h4 class="mb-1 text-lg font-bold">AI Smart Match</h4>
+          <p class="text-sm">Uses story, cast, and user taste to suggest spot-on films.</p>
+        </div>
+        <div class="flex-1 p-4 rounded-xl bg-gradient-to-bl from-[#31393C]/20 to-[#2E3944]/10 cinematch-glow">
+          <i class="fas fa-palette fa-2x text-[#CCC7BF] mb-2"></i>
+          <h4 class="mb-1 text-lg font-bold">Stunning Visuals</h4>
+          <p class="text-sm">Movie cards with 3D tilt, genre ribbons, and dynamic ratings.</p>
+        </div>
+        <div class="flex-1 p-4 rounded-xl bg-gradient-to-tr from-[#31393C]/30 to-[#3E96F4]/10 cinematch-glow">
+          <i class="fas fa-chart-pie fa-2x text-[#CCC7BF] mb-2"></i>
+          <h4 class="mb-1 text-lg font-bold">Genre Insights</h4>
+          <p class="text-sm">Interactively view genre and rating breakdowns of your recs.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="w-full text-center text-[#EDEEEB] py-7">
+    <div class="flex items-center justify-center space-x-2 mb-2">
+      <i class="fas fa-video text-[#3E96F4]"></i><span class="font-bold text-[#CCC7BF]">CineMatch</span>
+    </div>
+    <small>
+      Movie data: <a href="https://www.themoviedb.org/" target="_blank" class="underline hover:text-[#3E96F4]">TMDB API</a> |
+      <button onclick="window.scrollTo({top:0,behavior:'smooth'});" class="underline hover:text-white">Top</button>
+    </small>
+  </footer>
+
+  <script>
+    // Show loading animation on form submission
+    document.querySelector('form').addEventListener('submit', function() {
+      document.getElementById('loader').style.display = 'block';
+    });
+
+    // Card View/Toggle logic
+    function switchView(mode) {
+      document.getElementById('card-view').classList.add('hidden');
+      document.getElementById('grid-view').classList.add('hidden');
+      document.getElementById('view-cards').classList.remove('active');
+      document.getElementById('view-grid').classList.remove('active');
+
+      if (mode=='card') {
+        document.getElementById('card-view').classList.remove('hidden');
+        document.getElementById('view-cards').classList.add('active');
+      } else if (mode=='grid') {
+        document.getElementById('grid-view').classList.remove('hidden');
+        document.getElementById('view-grid').classList.add('active');
+      }
+    }
+
+    // Event listeners for view toggle buttons
+    document.getElementById('view-cards').onclick = () => switchView('card');
+    document.getElementById('view-grid').onclick = () => switchView('grid');
+
+    // Set default view on page load to 'grid'
+    switchView('grid');
+
+    // NIGHT-DAY MODE LOGIC
+    // Set darkMode to false initially for light mode default
+    let darkMode = false;
+    document.getElementById('toggle-mode').onclick = () => {
+      darkMode = !darkMode;
+      // Toggle body class for dark/light mode styles
+      document.getElementById('body').className = darkMode ? 'dark-mode transition-bg min-h-screen flex flex-col relative' : 'light-mode transition-bg min-h-screen flex flex-col relative';
+      // Toggle background style
+      document.getElementById('dynamic-bg').style.background =
+        darkMode
+          ? "radial-gradient(ellipse at 60% 30%, rgba(62, 150, 244, 0.16) 0%, rgba(49, 57, 60, 0.18) 100%)"
+          : "radial-gradient(ellipse at 60% 30%, rgba(204, 199, 191, 0.3) 0%, rgba(237, 238, 235, 0.19) 100%)";
+      // Toggle mode icon
+      document.getElementById('mode-icon').className = darkMode ? "fas fa-moon text-[#EDEEEB]" : "fas fa-sun text-[#3E96F4]";
+       // Update chart colors on mode toggle
+       updateChartColors(darkMode);
+    };
+
+    // Function to update chart colors based on mode
+    function updateChartColors(isDarkMode) {
+        const chart = Chart.getChart('genrePopularityChart'); // Get the Chart.js instance
+        if (!chart) return;
+
+        const textColor = isDarkMode ? '#EDEEEB' : '#31393C';
+        const gridColor = isDarkMode ? 'rgba(237, 238, 235, 0.1)' : 'rgba(49, 57, 60, 0.1)'; // Darker grid for light mode
+
+        chart.options.scales.y.ticks.color = textColor;
+        chart.options.scales.y.grid.color = gridColor;
+        chart.options.scales.y.title.color = textColor;
+        chart.options.scales.x.ticks.color = textColor;
+        chart.options.scales.x.grid.color = gridColor;
+        chart.options.scales.x.title.color = textColor;
+        chart.options.plugins.title.color = textColor;
+
+        chart.update(); // Redraw the chart with new colors
+    }
+
+
+    // 3D TILT EFFECT on movie cards
+    document.addEventListener('mousemove', e => {
+      document.querySelectorAll('.movie-card-3d').forEach(card => {
+        const rect = card.getBoundingClientRect();
+        // Check if mouse is within the card boundaries
+        if(
+          e.clientX >= rect.left && e.clientX <= rect.right &&
+          e.clientY >= rect.top && e.clientY <= rect.bottom) {
+          // Calculate tilt based on mouse position relative to card center
+          let x = (e.clientX - rect.left) / rect.width - .5,
+              y = (e.clientY - rect.top) / rect.height - .5;
+          // Apply 3D transform
+          card.style.transform = `rotateY(${x*12}deg) rotateX(${(-y)*6}deg) scale(1.045)`;
+        } else {
+          // Reset transform when mouse leaves the card
+          card.style.transform = "";
+        }
+      });
+    });
+
+    // Chart.js - Genre Popularity Chart
+    document.addEventListener('DOMContentLoaded', function() {
+      const ctx = document.getElementById('genrePopularityChart').getContext('2d');
+
+      // Sample data for genre popularity (replace with actual data if available)
+      const genreData = {
+        labels: ['Action', 'Comedy', 'Drama', 'Sci-Fi', 'Horror', 'Romance', 'Animation'],
+        datasets: [{
+          label: 'Popularity Score',
+          data: [12, 19, 3, 5, 2, 3, 7], // Sample scores
+          backgroundColor: [
+            'rgba(62, 150, 244, 0.8)', /* #3E96F4 */
+            'rgba(237, 238, 235, 0.8)', /* #EDEEEB */
+            'rgba(204, 199, 191, 0.8)', /* #CCC7BF */
+            'rgba(49, 57, 60, 0.8)', /* #31393C */
+            'rgba(62, 150, 244, 0.8)', /* #3E96F4 */
+            'rgba(237, 238, 235, 0.8)', /* #EDEEEB */
+            'rgba(204, 199, 191, 0.8)'  /* #CCC7BF */
+          ],
+          borderColor: [
+            'rgba(62, 150, 244, 1)', /* #3E96F4 */
+            'rgba(237, 238, 235, 1)', /* #EDEEEB */
+            'rgba(204, 199, 191, 1)', /* #CCC7BF */
+            'rgba(49, 57, 60, 1)', /* #31393C */
+            'rgba(62, 150, 244, 1)', /* #3E96F4 */
+            'rgba(237, 238, 235, 1)', /* #EDEEEB */
+            'rgba(204, 199, 191, 1)'  /* #CCC7BF */
+          ],
+          borderWidth: 1
+        }]
+      };
+
+      // Chart configuration
+      const genreChart = new Chart(ctx, {
+        type: 'bar', // Bar chart type
+        data: genreData,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false, // Allow chart to resize freely
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Popularity Score',
+                color: '#EDEEEB' // Text color for dark mode
+              },
+              ticks: {
+                color: '#CCC7BF' // Tick color for dark mode
+              },
+              grid: {
+                color: 'rgba(237, 238, 235, 0.1)' // Grid line color for dark mode
+              }
+            },
+            x: {
+               title: {
+                display: true,
+                text: 'Genre',
+                color: '#EDEEEB' // Text color for dark mode
+              },
+              ticks: {
+                color: '#CCC7BF' // Tick color for dark mode
+              },
+              grid: {
+                color: 'rgba(237, 238, 235, 0.1)' // Grid line color for dark mode
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false // Hide legend
+            },
+            title: {
+              display: true,
+              text: 'Genre Popularity Distribution',
+              color: '#EDEEEB', // Title color for dark mode
+              font: {
+                size: 18
+              }
+            }
+          }
+        }
+      });
+       // Initial chart color update based on current mode
+       updateChartColors(darkMode);
+    });
+  </script>
+</body>
+</html>
