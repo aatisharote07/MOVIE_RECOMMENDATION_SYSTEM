@@ -1,13 +1,24 @@
 🎬 Movie Recommendation System
+
+
 Welcome to the Movie Recommendation System!
+
 Built as a part of our academic mini-project, this system suggests movies similar to your favorites, using smart Natural Language Processing (NLP) and Machine Learning techniques. 🚀
+
 📌 Project Highlights
+
 •	Content-Based Filtering: Suggests movies purely based on metadata like genres, keywords, cast, crew, and overview.
+
 •	NLP Techniques: Tokenization, stemming, and vectorization using the Bag-of-Words model.
+
 •	Cosine Similarity: Measures how close two movies are, based on their feature vectors.
+
 •	Interactive Web App: Simple and elegant frontend using Flask and TailwindCSS.
+
 •	Dynamic Movie Posters: Fetches real-time posters from TMDB API.
+
 •	Top 10 Recommendations: Displays the top 10 similar movies for any selected title.
+
 🛠️ Tech Stack
 •	Python 3.7+
 •	Flask (for backend)
