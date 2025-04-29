@@ -55,6 +55,7 @@ Built as a part of our academic mini-project, this system suggests movies simila
 📂 Project Structure
 
 movie-recommendation-system/
+
 ├── app.py                 # Flask backend logic
 
 ├── index.html              # Frontend (TailwindCSS + Jinja2 template)
