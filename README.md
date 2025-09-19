@@ -5,7 +5,7 @@ Welcome to the Movie Recommendation System!
 
 Built as a part of our academic mini-project, this system suggests movies similar to your favorites, using smart Natural Language Processing (NLP) and Machine Learning techniques. 🚀
 
-##📌 Project Highlights
+## 📌 Project Highlights
 
 •	Content-Based Filtering: Suggests movies purely based on metadata like genres, keywords, cast, crew, and overview.
 
