@@ -5,7 +5,7 @@ Welcome to the Movie Recommendation System!
 
 Built as a part of our academic mini-project, this system suggests movies similar to your favorites, using smart Natural Language Processing (NLP) and Machine Learning techniques. 🚀
 
-📌 Project Highlights
+##📌 Project Highlights
 
 •	Content-Based Filtering: Suggests movies purely based on metadata like genres, keywords, cast, crew, and overview.
 
@@ -19,7 +19,7 @@ Built as a part of our academic mini-project, this system suggests movies simila
 
 •	Top 10 Recommendations: Displays the top 10 similar movies for any selected title.
 
-🛠️ Tech Stack
+##🛠️ Tech Stack
 
 •	Python 3.7+
 
@@ -33,7 +33,7 @@ Built as a part of our academic mini-project, this system suggests movies simila
 
 •	TMDB API (for fetching movie posters)
 
-🚀 How to Run Locally
+##🚀 How to Run Locally
 
 1.	Clone the Repository:
    
@@ -52,7 +52,7 @@ Built as a part of our academic mini-project, this system suggests movies simila
    
    Go to: http://127.0.0.1:5000
    
-📂 Project Structure
+##📂 Project Structure
 
 movie-recommendation-system/
 
@@ -72,7 +72,7 @@ movie-recommendation-system/
 
 └── requirements.txt        # Project dependencies
 
-🎯 Key Features
+##🎯 Key Features
 
 •	Search for any movie from the list.
 
@@ -86,7 +86,7 @@ movie-recommendation-system/
 
 •	Responsive and modern UI.
 
-🧠 Future Improvements
+##🧠 Future Improvements
 
 •	Add Collaborative Filtering for even better personalization.
 
@@ -98,10 +98,10 @@ movie-recommendation-system/
 
 •	Deploy online using Heroku or AWS.
 
-📜 License
+##📜 License
 This project is licensed under the MIT License.
 
-✨ Authors
+##✨ Authors
 
 Aatish Ramdas Arote 
 
