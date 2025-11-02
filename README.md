@@ -97,8 +97,12 @@ movie-recommendation-system/
 🧑‍💻 Authors
 
 Aatish Ramdas Arote
+
 Viraj Vilas Gawari
+
+
 Department of Computer Engineering,
+
 Konkan Gyanpeeth College of Engineering, Karjat
 
 📜 License
