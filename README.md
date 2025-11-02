@@ -51,13 +51,21 @@ Go to 👉 http://127.0.0.1:5000
 📂 Project Structure
 movie-recommendation-system/
 │
+
 ├── app.py                # Flask backend logic
+
 ├── index.html            # Frontend (TailwindCSS + Jinja2 template)
+
 ├── movie_list.pkl        # Pickled movie metadata
+
 ├── similarity.pkl        # Pickled similarity matrix
+
 ├── notebook.ipynb        # Data preprocessing & model building
+
 ├── static/               # Static files (images, CSS, JS)
+
 ├── requirements.txt      # Dependencies
+
 └── README.md             # Project documentation
 
 🎯 Key Features
