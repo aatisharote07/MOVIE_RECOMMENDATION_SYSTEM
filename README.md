@@ -71,18 +71,27 @@ movie-recommendation-system/
 🎯 Key Features
 
 ✨ Search for any movie from the list
+
 ✨ Get Top 10 similar movies instantly with posters
+
 ✨ Light/Dark Mode support 🌗
+
 ✨ Beautiful 3D animated movie cards 🎥
+
 ✨ Genre popularity insights using charts 📊
+
 ✨ Fully responsive and modern UI
 
 🔮 Future Enhancements
 
 🚀 Add Collaborative Filtering for personalized recommendations
+
 💬 Include user ratings and reviews
+
 🧠 Implement Word2Vec / BERT-based embeddings for smarter suggestions
+
 📈 Enable real-time recommendations based on user mood or current trends
+
 🌍 Deploy the app on Heroku / AWS for public access
 
 🧑‍💻 Authors
