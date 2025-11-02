@@ -37,6 +37,7 @@ Follow these simple steps to get the app running on your system 👇
  
 git clone https://github.com/your-username/movie-recommendation-system.git
 cd movie-recommendation-system
+
 2️⃣ Install Dependencies
 pip install -r requirements.txt
 
