@@ -34,7 +34,7 @@ Built as part of our **academic mini-project**, this system recommends movies si
 Follow these simple steps to get the app running on your system 👇
 
 ### 1️⃣ Clone the Repository
-```bash
+ 
 git clone https://github.com/your-username/movie-recommendation-system.git
 cd movie-recommendation-system
 2️⃣ Install Dependencies
