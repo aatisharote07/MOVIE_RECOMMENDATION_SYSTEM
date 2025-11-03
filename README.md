@@ -96,9 +96,9 @@ movie-recommendation-system/
 
 🧑‍💻 Authors
 
-Aatish Ramdas Arote
+- Aatish Ramdas Arote
 
-Viraj Vilas Gawari
+- Viraj Vilas Gawari
 
 
 Department of Computer Engineering,
