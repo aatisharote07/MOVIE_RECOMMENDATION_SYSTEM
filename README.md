@@ -33,7 +33,7 @@ Built as part of our **academic mini-project**, this system recommends movies si
 
 Follow these simple steps to get the app running on your system 👇
 
-### 1️⃣ Clone the Repository
+  1️⃣ Clone the Repository
  
 git clone https://github.com/your-username/movie-recommendation-system.git
 cd movie-recommendation-system
@@ -48,7 +48,7 @@ python app.py
 
 Go to 👉 http://127.0.0.1:5000
 
-📂 Project Structure
+### 📂 Project Structure
 movie-recommendation-system/
 │
 
@@ -68,7 +68,7 @@ movie-recommendation-system/
 
 └── README.md             # Project documentation
 
-🎯 Key Features
+### 🎯 Key Features
 
 ✨ Search for any movie from the list
 
@@ -82,7 +82,7 @@ movie-recommendation-system/
 
 ✨ Fully responsive and modern UI
 
-🔮 Future Enhancements
+### 🔮 Future Enhancements
 
 🚀 Add Collaborative Filtering for personalized recommendations
 
@@ -94,7 +94,7 @@ movie-recommendation-system/
 
 🌍 Deploy the app on Heroku / AWS for public access
 
-🧑‍💻 Authors
+### 🧑‍💻 Authors
 
 - Aatish Ramdas Arote
 
@@ -105,6 +105,6 @@ Department of Computer Engineering,
 
 Konkan Gyanpeeth College of Engineering, Karjat
 
-📜 License
+### 📜 License
 
 This project is licensed under the MIT License.
