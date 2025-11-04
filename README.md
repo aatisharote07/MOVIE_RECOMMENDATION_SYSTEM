@@ -1,4 +1,4 @@
-# 🎬 **Movie Recommendation System — CineMatch**
+# 🎬 **Movie Recommendation System - CineMatch**
 
 Welcome to **CineMatch**, your personal movie buddy! 🍿  
 Built as part of our **academic mini-project**, this system recommends movies similar to your favorites using smart **Natural Language Processing (NLP)** and **Machine Learning (ML)** techniques. 🚀  
