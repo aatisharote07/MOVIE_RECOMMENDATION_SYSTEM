@@ -49,9 +49,6 @@ python app.py
 Go to 👉 http://127.0.0.1:5000
 
 ### 📂 Project Structure
-movie-recommendation-system/
-│
-
 ├── app.py                # Flask backend logic
 
 ├── index.html            # Frontend (TailwindCSS + Jinja2 template)
